@@ -1,0 +1,35 @@
+{
+  "name": "recipe-box",
+  "version": "1.0.0",
+  "description": "A sandbox for React.js and Oauth",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benwilhelm/recipe-box.git"
+  },
+  "author": "Ben Wilhelm <ben@doublebeamdesign.com> (http://doublebeamdesign.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/benwilhelm/recipe-box/issues"
+  },
+  "homepage": "https://github.com/benwilhelm/recipe-box#readme",
+  "dependencies": {
+    "google-auth-library": "^0.9.8",
+    "googleapis": "^7.1.0",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.5.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.0.1",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-watch": "^4.3.6",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

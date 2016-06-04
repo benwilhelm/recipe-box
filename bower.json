@@ -1,0 +1,22 @@
+{
+  "name": "recipe-box",
+  "description": "A sandbox for React.js and Oauth",
+  "main": "index.js",
+  "authors": [
+    "Ben Wilhelm <ben@doublebeamdesign.com> (http://doublebeamdesign.com)"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/benwilhelm/recipe-box",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
+}
