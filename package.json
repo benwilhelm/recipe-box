@@ -18,6 +18,7 @@
   "homepage": "https://github.com/benwilhelm/recipe-box#readme",
   "dependencies": {
     "google-auth-library": "^0.9.8",
+    "google-client-api": "^1.0.4",
     "googleapis": "^7.1.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0"

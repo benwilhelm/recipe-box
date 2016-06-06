@@ -5,7 +5,7 @@ class ButtonNo extends React.Component {
   render() {
     
     return (
-      <a href='#' className="btn btn-primary btn-block" onClick={this.props.onClick}>No</a>
+      <a href='#' className="btn btn-primary btn-block button-no" onClick={this.props.onClick}>No</a>
     )
   }
 }
