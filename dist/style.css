@@ -1,0 +1,28 @@
+body > .container {
+  padding-top: 2em;
+}
+
+.btn.btn-block {
+  font-size: 1.3em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+#no_container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+#no_container .inner {
+  margin: 15px;
+}
+
+h1#app_title {
+  font-size: 18px;
+}
+
+#recipe .title {
+  font-size: 4em;
+}
