@@ -41,11 +41,9 @@ class RecipeBox extends React.Component {
   handleAuthResult(authResult) {
         
     if (authResult && !authResult.error) {
-      var gapi = this.state.gapi
-      localStorage.setItem("accessToken", JSON.stringify(gapi.auth.getToken()))
-      
       this.setState({ 
-        loggedIn: authResult.status.signed_in
+        loggedIn: authResult.status.signed_in,
+        accessToken: authResult.access_token
       })
       this.loadSheetsApi();
     } else {
@@ -72,7 +70,6 @@ class RecipeBox extends React.Component {
       self.nextRecipe();
     }, function(response) {
       alert('Error: ' + response.result.error.message);
-      self.setState({ loggedIn: false })
     });
   }
   
@@ -92,16 +89,6 @@ class RecipeBox extends React.Component {
   
   componentDidMount() {
     GetGoogleClient((gapi) => {
-      if (localStorage.accessToken) {
-        var token = JSON.parse(localStorage.accessToken)
-        gapi.auth.setToken(token);
-        this.setState({
-          loggedIn: true,
-          gapi: gapi
-        })
-        return this.loadSheetsApi();
-      }
-      
       this.setState({gapi: gapi})
     })
   }
