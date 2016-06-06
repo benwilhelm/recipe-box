@@ -20357,9 +20357,11 @@ var RecipeBox = function (_React$Component) {
     value: function handleAuthResult(authResult) {
 
       if (authResult && !authResult.error) {
+        var gapi = this.state.gapi;
+        localStorage.setItem("accessToken", JSON.stringify(gapi.auth.getToken()));
+
         this.setState({
-          loggedIn: authResult.status.signed_in,
-          accessToken: authResult.access_token
+          loggedIn: authResult.status.signed_in
         });
         this.loadSheetsApi();
       } else {
@@ -20388,6 +20390,7 @@ var RecipeBox = function (_React$Component) {
         self.nextRecipe();
       }, function (response) {
         alert('Error: ' + response.result.error.message);
+        self.setState({ loggedIn: false });
       });
     }
   }, {
@@ -20414,6 +20417,15 @@ var RecipeBox = function (_React$Component) {
       var _this2 = this;
 
       (0, _googleClientApi2.default)(function (gapi) {
+        if (localStorage.accessToken) {
+          var token = JSON.parse(localStorage.accessToken);
+          gapi.auth.setToken(token);
+          _this2.setState({
+            loggedIn: true,
+            gapi: gapi });
+          return _this2.loadSheetsApi();
+        }
+
         _this2.setState({ gapi: gapi });
       });
     }
