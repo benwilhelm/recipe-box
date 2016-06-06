@@ -1,5 +1,6 @@
 import React from 'react'
 import ButtonYes from "./button/yes.react.js";
+import RecipeLink from "./recipe-link.react.js";
 
 class Recipe extends React.Component {
   
@@ -10,6 +11,7 @@ class Recipe extends React.Component {
     return (
       <div id="recipe">
         <h2 className='title'>{recipe.title}?</h2>
+        <RecipeLink href={recipe.href} />
       </div>
     )
   }
