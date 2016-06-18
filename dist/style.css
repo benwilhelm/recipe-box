@@ -26,3 +26,17 @@ h1#app_title {
 #recipe .title {
   font-size: 4em;
 }
+
+
+.sheet-list a {
+  display: inline-block;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #555;
+  padding-right: 1em;
+}
+
+.sheet-list a.active {
+  color: #111;
+  text-decoration: underline;
+}
