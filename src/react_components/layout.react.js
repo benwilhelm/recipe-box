@@ -19,7 +19,6 @@ class Layout extends React.Component {
     this.loadSheetsApi = this.loadSheetsApi.bind(this);
     this.getWorksheet = this.getWorksheet.bind(this);
     this.storeRows = this.storeRows.bind(this);
-    this.nextRecipe = this.nextRecipe.bind(this);
     this.state = {
       loggedIn: false,
       gapi: false,
@@ -64,35 +63,36 @@ class Layout extends React.Component {
     
     gapi.client.sheets.spreadsheets.get({
       spreadsheetId: FILE_ID
-    }).then(res => {
+    })
+    .then(res => {
       var sheets = res.result.sheets.map(s => s.properties)
       this.setState({sheets: sheets});
+      var ranges = sheets.map(s => `${s.title}!B2:C`);
+      return gapi.client.sheets.spreadsheets.values.batchGet({
+        spreadsheetId: FILE_ID,
+        ranges: ranges
+      })
     })
-    
-    gapi.client.sheets.spreadsheets.values.get({
-      spreadsheetId: FILE_ID,
-      range: 'Jen and Ben!B2:C',
-    }).then(function(response) {
-      var range = response.result;
-      self.storeRows(range.values);
-      self.nextRecipe();
+    .then(response => {
+      var ranges = response.result.valueRanges.map(r => r.values);
+      var sheets = this.state.sheets;
+      self.storeRows(sheets, ranges);
     }, function(response) {
       alert('Error: ' + response.result.error.message);
     });
   }
   
-  storeRows(rawRows) {
-    var recipes = rawRows.map(r => ({
-      title : r[0],
-      href  : r[1]
-    }))
+  storeRows(sheets, ranges) {
+    var recipes = {};
+    
+    sheets.forEach((s,idx) => {
+      recipes[s.sheetId] = ranges[idx].map(r => ({
+        title: r[0],
+        href : r[1]
+      }))
+    })
+    
     this.setState({ recipes: recipes })
-  }
-
-  nextRecipe() {
-    var recipes = this.state.recipes
-    var idx = Math.floor(Math.random() * recipes.length)
-    this.setState({ selectedRecipe: recipes[idx] })
   }
   
   componentDidMount() {
@@ -121,7 +121,7 @@ class Layout extends React.Component {
       )
     }
     
-    if (!this.state.recipes || !this.state.selectedRecipe) {
+    if (!this.state.recipes) {
       return <h1>Syncing with spreadsheet...</h1>
     }
     
@@ -129,8 +129,7 @@ class Layout extends React.Component {
       <div>
         <Menu sheets={this.state.sheets} />
         {this.props.children && React.cloneElement(this.props.children, {
-          selectedRecipe: this.state.selectedRecipe,
-          onNextRecipe: this.nextRecipe
+          recipes: this.state.recipes
         })}
       </div>
     )

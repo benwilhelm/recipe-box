@@ -25846,7 +25846,6 @@ var Layout = function (_React$Component) {
     _this.loadSheetsApi = _this.loadSheetsApi.bind(_this);
     _this.getWorksheet = _this.getWorksheet.bind(_this);
     _this.storeRows = _this.storeRows.bind(_this);
-    _this.nextRecipe = _this.nextRecipe.bind(_this);
     _this.state = {
       loggedIn: false,
       gapi: false,
@@ -25904,36 +25903,38 @@ var Layout = function (_React$Component) {
           return s.properties;
         });
         _this2.setState({ sheets: sheets });
-      });
-
-      gapi.client.sheets.spreadsheets.values.get({
-        spreadsheetId: FILE_ID,
-        range: 'Jen and Ben!B2:C'
+        var ranges = sheets.map(function (s) {
+          return s.title + "!B2:C";
+        });
+        return gapi.client.sheets.spreadsheets.values.batchGet({
+          spreadsheetId: FILE_ID,
+          ranges: ranges
+        });
       }).then(function (response) {
-        var range = response.result;
-        self.storeRows(range.values);
-        self.nextRecipe();
+        var ranges = response.result.valueRanges.map(function (r) {
+          return r.values;
+        });
+        var sheets = _this2.state.sheets;
+        self.storeRows(sheets, ranges);
       }, function (response) {
         alert('Error: ' + response.result.error.message);
       });
     }
   }, {
     key: "storeRows",
-    value: function storeRows(rawRows) {
-      var recipes = rawRows.map(function (r) {
-        return {
-          title: r[0],
-          href: r[1]
-        };
+    value: function storeRows(sheets, ranges) {
+      var recipes = {};
+
+      sheets.forEach(function (s, idx) {
+        recipes[s.sheetId] = ranges[idx].map(function (r) {
+          return {
+            title: r[0],
+            href: r[1]
+          };
+        });
       });
+
       this.setState({ recipes: recipes });
-    }
-  }, {
-    key: "nextRecipe",
-    value: function nextRecipe() {
-      var recipes = this.state.recipes;
-      var idx = Math.floor(Math.random() * recipes.length);
-      this.setState({ selectedRecipe: recipes[idx] });
     }
   }, {
     key: "componentDidMount",
@@ -25964,7 +25965,7 @@ var Layout = function (_React$Component) {
         });
       }
 
-      if (!this.state.recipes || !this.state.selectedRecipe) {
+      if (!this.state.recipes) {
         return _react2.default.createElement(
           "h1",
           null,
@@ -25977,8 +25978,7 @@ var Layout = function (_React$Component) {
         null,
         _react2.default.createElement(_menuReact2.default, { sheets: this.state.sheets }),
         this.props.children && _react2.default.cloneElement(this.props.children, {
-          selectedRecipe: this.state.selectedRecipe,
-          onNextRecipe: this.nextRecipe
+          recipes: this.state.recipes
         })
       );
     }
@@ -26145,12 +26145,35 @@ var RecipeGroup = function (_React$Component) {
   function RecipeGroup(props) {
     _classCallCheck(this, RecipeGroup);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(RecipeGroup).call(this, props));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RecipeGroup).call(this, props));
+
+    _this.nextRecipe = _this.nextRecipe.bind(_this);
+    _this.state = {
+      selectedRecipe: null
+    };
+    return _this;
   }
 
   _createClass(RecipeGroup, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.nextRecipe();
+    }
+  }, {
+    key: "nextRecipe",
+    value: function nextRecipe() {
+      var sheetId = this.props.params.sheetId;
+      var recipes = this.props.recipes[sheetId];
+      var idx = Math.floor(Math.random() * recipes.length);
+      this.setState({ selectedRecipe: recipes[idx] });
+    }
+  }, {
     key: "render",
     value: function render() {
+      if (!this.state.selectedRecipe) {
+        return null;
+      }
+
       return _react2.default.createElement(
         "div",
         null,
@@ -26160,14 +26183,14 @@ var RecipeGroup = function (_React$Component) {
           { id: "app_title" },
           "What's For Dinner?"
         ),
-        _react2.default.createElement(_recipeReact2.default, { recipe: this.props.selectedRecipe }),
+        _react2.default.createElement(_recipeReact2.default, { recipe: this.state.selectedRecipe }),
         _react2.default.createElement(
           "div",
           { id: "no_container" },
           _react2.default.createElement(
             "div",
             { className: "inner" },
-            _react2.default.createElement(_noReact2.default, { onClick: this.props.onNextRecipe })
+            _react2.default.createElement(_noReact2.default, { onClick: this.nextRecipe })
           )
         )
       );
