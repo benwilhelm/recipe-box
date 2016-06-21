@@ -9,7 +9,7 @@ class Menu extends React.Component {
   
   render() {
     
-    if (!this.props.sheets || !this.props.sheets.length) {
+    if (!this.props.sheets) {
       return null
     }
     

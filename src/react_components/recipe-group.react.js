@@ -1,8 +1,10 @@
 import React        from 'react';
+import { connect }  from 'react-redux';
 
 import Menu         from "./menu.react.js";
 import Recipe       from "./recipe.react.js";
 import ButtonNo     from "./button/no.react.js";
+import store        from "../store.js"
 
 class RecipeGroup extends React.Component {
   
@@ -12,19 +14,17 @@ class RecipeGroup extends React.Component {
     this.state = {
       selectedRecipe: null
     }
+    
+    store.subscribe(() => {
+      this.setState({
+        selectedRecipe: store.getState().recipes.selectedRecipe
+      })
+    })
   }
-  
-  componentDidMount() {
-    this.nextRecipe();
-  }
-  
+    
   nextRecipe() {
-    var sheetId = this.props.params.sheetId;
-    var recipes = this.props.recipes[sheetId]
-    var idx = Math.floor(Math.random() * recipes.length)
-    this.setState({ selectedRecipe: recipes[idx] })
+    store.dispatch({ type: 'NEXT_RECIPE' })
   }
-
   
   render() {
     if (!this.state.selectedRecipe) {
